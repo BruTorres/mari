@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏁 Grand Quiz 🏁</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Racing+One&family=Orbitron:wght@400;700;900&family=Dancing+Script:wght@700&display=swap');
+        
+        :root {
+            --pink-light: #ffc0cb;
+            --pink: #ff69b4;
+            --pink-dark: #ff1744;
+            --dark-bg: #1a0f1a;
+            --gradient-main: linear-gradient(135deg, var(--dark-bg) 0%, var(--pink-dark) 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 20, 147, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 105, 180, 0.4) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(255, 192, 203, 0.3) 0%, transparent 50%),
+                var(--gradient-main);
+            min-height: 100vh;
+            font-family: 'Press Start 2P', monospace;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .racing-lines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.3;
+            z-index: 1;
+        }
+
+        .racing-line {
+            position: absolute;
+            width: 100vw;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #ff1744, transparent);
+            animation: racing 10s infinite linear reverse;
+        }
+
+        .racing-line::after {
+            content: '🏎️';
+            position: absolute;
+            top: -16px;
+            left: 0;
+            font-size: 18px;
+            pointer-events: none;
+        }
+
+        @keyframes racing {
+            0% { transform: translateX(-100vw); }
+            100% { transform: translateX(100vw); }
+        }
+
+        .sparkles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .sparkle {
+            position: absolute;
+            color: #ff69b4;
+            font-size: 16px;
+            animation: sparkle 4s infinite ease-in-out;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { transform: scale(0) rotate(0deg); opacity: 0; }
+            50% { transform: scale(1) rotate(180deg); opacity: 1; }
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 10px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 10px;
+            background: 
+                linear-gradient(135deg, rgba(255, 23, 68, 0.9), rgba(255, 105, 180, 0.8)),
+                rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            padding: 10px;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 
+                0 0 40px rgba(255, 23, 68, 0.4),
+                inset 0 0 40px rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: shine 6s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .title {
+            font-family: 'Racing One', cursive;
+            font-size: 2.5em;
+            background: linear-gradient(45deg, #fff, #ff69b4, #fff);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+            animation: heartBeat 5s infinite ease-in-out;
+        }
+
+        .title .emoji {
+            background: none !important;
+            -webkit-text-fill-color: #fff !important;
+            color: #fff;
+            background-clip: border-box;
+        }
+
+        .subtitle {
+            color: #fff;
+            font-size: 1.3em;
+            font-weight: 400;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            position: relative;
+            z-index: 1;
+            font-family: 'Orbitron', monospace;
+        }
+
+        .game-area {
+            background: 
+                linear-gradient(135deg, rgba(255, 192, 203, 0.3), rgba(255, 105, 180, 0.3)),
+                rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(25px);
+            padding: 15px;
+            border-radius: 20px;
+            border: 2px solid rgba(255, 23, 68, 0.3);
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.4),
+                0 0 80px rgba(255, 23, 68, 0.2),
+                inset 0 0 40px rgba(255, 255, 255, 0.05);
+            position: relative;
+        }
+
+        .question-counter {
+            text-align: center;
+            color: #ff69b4;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .question {
+            font-size: 1.3em;
+            color: #fff;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 400;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+            line-height: 1.4;
+            background: none;
+        }
+
+        .options {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .option {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 23, 68, 0.2));
+            border: 2px solid rgba(255, 23, 68, 0.3);
+            padding: 15px;
+            border-radius: 20px;
+            color: #fff;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 600;
+            backdrop-filter: blur(15px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .option:hover::before {
+            left: 100%;
+        }
+
+        .option:hover {
+            background: linear-gradient(135deg, rgba(255, 23, 68, 0.4), rgba(255, 105, 180, 0.3));
+            border-color: #ff69b4;
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 40px rgba(255, 23, 68, 0.4);
+        }
+
+        .option.selected {
+            background: linear-gradient(135deg, rgba(255, 23, 68, 0.6), rgba(255, 105, 180, 0.5));
+            border-color: #fff;
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 23, 68, 0.6);
+        }
+
+        .score-container {
+            text-align: center;
+            margin: 30px 0;
+            background: rgba(255, 23, 68, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 23, 68, 0.3);
+        }
+
+        .score {
+            font-size: 1.6em;
+            color: #ff69b4;
+            font-weight: 900;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .next-btn {
+            background: linear-gradient(45deg, #ff1744, #ff69b4, #ff1744);
+            background-size: 200% 200%;
+            border: none;
+            padding: 20px 50px;
+            border-radius: 30px;
+            color: #fff;
+            font-size: 1.3em;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            font-weight: 900;
+            font-family: 'Racing One', cursive;
+            box-shadow: 0 8px 30px rgba(255, 23, 68, 0.4);
+            display: block;
+            margin: 40px auto;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 8px 30px rgba(255, 23, 68, 0.4); }
+            50% { box-shadow: 0 8px 40px rgba(255, 23, 68, 0.8); }
+        }
+
+        .next-btn:hover {
+            background-position: 100% 0;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 50px rgba(255, 23, 68, 0.6);
+        }
+
+        .final-screen {
+            text-align: center;
+        }
+
+        .final-title {
+            font-family: 'Racing One', cursive;
+            font-size: 3em;
+            color: #fff;
+            background: none;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+
+        .final-score {
+            font-size: 1.8em;
+            color: #ff69b4;
+            font-weight: 900;
+            margin-bottom: 30px;
+        }
+
+        .love-message {
+            background: linear-gradient(135deg, rgba(255, 23, 68, 0.2), rgba(255, 105, 180, 0.2));
+            backdrop-filter: blur(20px);
+            padding: 40px;
+            border-radius: 25px;
+            margin: 40px 0;
+            font-size: 1.3em;
+            color: #fff;
+            text-align: center;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            line-height: 1.6;
+            box-shadow: 0 0 40px rgba(255, 23, 68, 0.3);
+            font-family: 'Press Start 2P', monospace;
+            animation: heartBeat 5s infinite ease-in-out;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff1744, #ff69b4);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @media (max-width: 600px) {
+            .title { font-size: 1.8em; }
+            .container {
+                padding: 8px;
+                display: flex;
+                flex-direction: column;
+                height: 100vh;
+            }
+            .game-area {
+                padding: 15px 8px;
+                flex: 1;
+                overflow-y: auto;
+            }
+            .options { gap: 8px; }
+            .option { padding: 8px; }
+            .question { font-size: 1.2em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="racing-lines">
+        <div class="racing-line" style="top: 20%; animation-delay: 0s;"></div>
+        <div class="racing-line" style="top: 40%; animation-delay: 1s;"></div>
+        <div class="racing-line" style="top: 60%; animation-delay: 2s;"></div>
+        <div class="racing-line" style="top: 80%; animation-delay: 0.5s;"></div>
+    </div>
+    <div class="sparkles"></div>
+    
+    <div class="container">
+        <div class="header">
+            <h1 class="title"><span class="emoji">🏁</span> GRAND PRIX DA MARI <span class="emoji">🏁</span></h1>
+        </div>
+
+        <div class="game-area">
+            <div id="game-content">
+                <div class="question-counter">
+                    Pergunta <span id="current-q">1</span> de <span id="total-q">12</span>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill" style="width: 8.33%"></div>
+                </div>
+                
+                <div class="question-container">
+                    <div class="question" id="question-text"></div>
+                    <div class="options" id="options-container"></div>
+                </div>
+                
+                <div class="score-container">
+                    <div class="score">🏆 <span id="score">0</span> pontos</div>
+                </div>
+                
+                <button class="next-btn hidden" id="next-btn">Próxima Volta 🏁</button>
+            </div>
+
+            <div id="final-screen" class="hidden final-screen">
+                <div class="final-title">🏆 CORRIDA FINALIZADA! 🏆</div>
+                <div class="final-score" id="final-score-text"></div>
+                <div class="love-message" id="love-message"></div>
+                <button class="next-btn" onclick="restartGame()">Nova Corrida 🏁</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "🏎️ Em que ano Ayrton Senna conquistou seu primeiro título mundial?",
+                options: ["1988", "1989", "1990", "1991"],
+                correct: 0,
+                explanation: "Ele conquistou o título apenas dois anos após estrear na F1, ainda na década de 80."
+            },
+            {
+                question: "🎵 Qual música da Taylor Swift contém a letra 'I've got ..., and I'll write your name'?",
+                options: ["Style", "Shake It Off", "Blank Space", "Bad Blood"],
+                correct: 2,
+                explanation: "Esta música tem o nome de um espaço em branco, bem conhecida da era pop."
+            },
+            {
+                question: "🏁 Quantas voltas tem o circuito de Interlagos?",
+                options: ["69", "70", "71", "72"],
+                correct: 2,
+                explanation: "O circuito de Interlagos tem mais de 70 voltas, uma a mais que 70."
+            },
+            {
+                question: "💖 Complete a letra: 'And you call me up again just to break me like a...'",
+                options: ["promise", "dream", "heart", "glass"],
+                correct: 0,
+                explanation: "É algo frágil que se quebra quando não cumprimos o que prometemos."
+            },
+            {
+                question: "🏎️ Qual foi a última vitória de Ayrton Senna na F1?",
+                options: ["GP do Brasil 1993", "GP de Adelaide 1993", "GP do Japão 1993", "GP de Monaco 1993"],
+                correct: 1,
+                explanation: "Ocorreu na Austrália, em Adelaide, sob forte chuva no fim de 1993."
+            },
+            {
+                question: "🐴 Qual piloto da Ferrari é conhecido como 'Il Predestinato'?",
+                options: ["Sebastian Vettel", "Fernando Alonso", "Charles Leclerc", "Carlos Sainz"],
+                correct: 2,
+                explanation: "É o jovem piloto monegasco que guia um carro vermelho hoje em dia."
+            },
+            {
+                question: "🎵 Qual álbum da Taylor Swift foi inteiramente gravado durante a pandemia?",
+                options: ["Lover", "Folklore", "Evermore", "Midnights"],
+                correct: 1,
+                explanation: "Um álbum com clima folk que surgiu no meio de 2020, longe dos estúdios."
+            },  
+            {
+                question: "🏎️ Quantos títulos mundiais de construtores a Ferrari conquistou?",
+                options: ["14", "15", "16", "17"],
+                correct: 2,
+                explanation: "Um número par, maior que 15 e menor que 17."
+            },
+            {
+                question: "🎵 Qual é o nome real completo da Taylor Swift?",
+                options: ["Taylor Anne Swift", "Taylor Alison Swift", "Taylor Amanda Swift", "Taylor Alice Swift"],
+                correct: 1,
+                explanation: "O nome do meio dela tem seis letras e começa com 'A'."
+            },
+            {
+                question: "🏁 Qual frase ficou famosa de Ayrton Senna sobre pilotar na chuva?",
+                options: ["'Eu sou o melhor'", "'Na chuva eu voo'", "'Chuva é minha aliada'", "'Se você não vai mais atrás de uma brecha que existe, você não é mais um piloto de corrida'"],
+                correct: 3,
+                explanation: "O conselho fala sobre buscar brechas existentes em vez de desistir."
+            },
+            {
+                question: "🎶 Em qual álbum está a música 'Daylight'?",
+                options: ["1989", "Lover", "Folklore", "Evermore"],
+                correct: 1,
+                explanation: "É a faixa final de um álbum que celebra o amor, lançado em 2019."
+            },
+            {
+                question: "📺 Qual foi o primeiro videoclipe de Taylor Swift a atingir 1 bilhão de visualizações no YouTube?",
+                options: ["Love Story", "Shake It Off", "Blank Space", "Bad Blood"],
+                correct: 2,
+                explanation: "É o clipe em que ela satiriza sua imagem e destrói objetos em uma mansão."
+            },
+            {
+                question: "🎸 Taylor toca qual instrumento em suas primeiras apresentações ao vivo?",
+                options: ["Violão", "Piano", "Baixo", "Bateria"],
+                correct: 0,
+                explanation: "É o instrumento acústico de seis cordas que ela sempre leva ao palco."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let selectedAnswer = -1;
+
+        // Criar sparkles
+        function createSparkles() {
+            const sparklesContainer = document.querySelector('.sparkles');
+            for (let i = 0; i < 20; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.innerHTML = Math.random() > 0.5 ? '✨' : '💖';
+                sparkle.style.left = Math.random() * 100 + '%';
+                sparkle.style.top = Math.random() * 100 + '%';
+                sparkle.style.animationDelay = Math.random() * 4 + 's';
+                sparklesContainer.appendChild(sparkle);
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion) / questions.length) * 100;
+            document.getElementById('progress-fill').style.width = progress + '%';
+            document.getElementById('current-q').textContent = currentQuestion + 1;
+            document.getElementById('total-q').textContent = questions.length;
+        }
+
+        function displayQuestion() {
+            const question = questions[currentQuestion];
+            document.getElementById('question-text').textContent = question.question;
+            
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'option';
+                button.textContent = option;
+                button.onclick = () => selectAnswer(index);
+                optionsContainer.appendChild(button);
+            });
+            
+            document.getElementById('next-btn').classList.add('hidden');
+            selectedAnswer = -1;
+            updateProgress();
+        }
+
+        function selectAnswer(index) {
+            selectedAnswer = index;
+            const options = document.querySelectorAll('.option');
+            options.forEach((opt, i) => {
+                opt.classList.remove('selected');
+                if (i === index) {
+                    opt.classList.add('selected');
+                }
+            });
+            document.getElementById('next-btn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            if (selectedAnswer === -1) return;
+            
+            if (selectedAnswer === questions[currentQuestion].correct) {
+                score += 10;
+            }
+            
+            document.getElementById('score').textContent = score;
+            currentQuestion++;
+            
+            if (currentQuestion < questions.length) {
+                displayQuestion();
+            } else {
+                showFinalScreen();
+            }
+        }
+
+        function showFinalScreen() {
+            document.getElementById('game-content').classList.add('hidden');
+            document.getElementById('final-screen').classList.remove('hidden');
+            
+            const finalScore = document.getElementById('final-score-text');
+            const loveMessage = document.getElementById('love-message');
+            
+            const maxScore = questions.length * 10;
+            const percentage = (score / maxScore) * 100;
+            
+            finalScore.textContent = `${score} pontos de ${maxScore} possíveis (${percentage.toFixed(0)}%)`;
+            
+            let message = "";
+            if (percentage >= 90) {
+                message = "🏆 POLE POSITION! Você é uma verdadeira campeã mundial! Assim como Senna dominava tudo e Taylor domina os charts, você dominou meu coração desde o primeiro dia. You belong with me, forever! 💕🏁";
+            } else if (percentage >= 75) {
+                message = "🥇 PÓDIUM GARANTIDO! Como diz a Taylor: 'You're golden' - e você realmente é! 💖🏎️";
+            } else if (percentage >= 60) {
+                message = "🏅 PONTOS CONQUISTADOS! Como Senna sempre dizia, o importante é nunca desistir! Você manda bem na F1, é team Ferrari de coração, e ainda canta 'Daylight' comigo. 💕🎵";
+            } else if (percentage >= 40) {
+                message = "🎯 BOA CORRIDA! Mesmo que não tenha sido uma pole position, você sempre será minha number one! Igual ao Senna que nunca desistia e a Taylor que sempre se reinventa, nosso amor sempre fica mais forte. You're still the one! 💖✨";
+            } else {
+                message = "💝 CORAÇÃO DE CAMPEÃ! O importante não é a pontuação, é ter você na minha vida! Como diz Senna: 'Eu prefiro lutar por algo importante e perder, do que lutar por nada e ganhar.' E você é a coisa mais importante da minha vida! Te amo, minha princesa! 💕";
+            }
+            
+            loveMessage.textContent = message;
+        }
+
+        function restartGame() {
+            currentQuestion = 0;
+            score = 0;
+            selectedAnswer = -1;
+            document.getElementById('score').textContent = '0';
+            document.getElementById('game-content').classList.remove('hidden');
+            document.getElementById('final-screen').classList.add('hidden');
+            displayQuestion();
+        }
+
+        // Inicializar jogo
+        document.getElementById('next-btn').onclick = nextQuestion;
+        createSparkles();
+        displayQuestion();
+    </script>
+</body>
+</html>
